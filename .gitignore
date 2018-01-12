@@ -24,6 +24,7 @@
 /app/config/config_local.php
 /app/config/paths_local.php
 /app/config/*_local.php
+!/app/config/*.dist.php
 
 /app/logs/*
 !/app/logs/.gitkeep
