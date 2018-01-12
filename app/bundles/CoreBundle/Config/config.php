@@ -987,7 +987,7 @@ return [
         'transifex_username'   => '',
         'transifex_password'   => '',
         'update_stability'     => 'stable',
-        'cookie_path'          => '/',
+        //'cookie_path'          => '/',
         'cookie_domain'        => '',
         'cookie_secure'        => null,
         'cookie_httponly'      => false,

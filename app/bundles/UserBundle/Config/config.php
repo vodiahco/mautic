@@ -103,14 +103,14 @@ return [
             ],
         ],
         'public' => [
-            'mautic_user_passwordreset' => [
-                'path'       => '/passwordreset',
-                'controller' => 'MauticUserBundle:Public:passwordReset',
-            ],
-            'mautic_user_passwordresetconfirm' => [
-                'path'       => '/passwordresetconfirm',
-                'controller' => 'MauticUserBundle:Public:passwordResetConfirm',
-            ],
+//            'mautic_user_passwordreset' => [
+//                'path'       => '/passwordreset',
+//                'controller' => 'MauticUserBundle:Public:passwordReset',
+//            ],
+//            'mautic_user_passwordresetconfirm' => [
+//                'path'       => '/passwordresetconfirm',
+//                'controller' => 'MauticUserBundle:Public:passwordResetConfirm',
+//            ],
             'lightsaml_sp.metadata' => [
                 'path'       => '/saml/metadata.xml',
                 'controller' => 'LightSamlSpBundle:Default:metadata',
