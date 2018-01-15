@@ -174,7 +174,6 @@ class AssetRepository extends CommonRepository
 
     /**
      * Gets the sum size of assets.
-     *
      * @param array $assets
      *
      * @return int
@@ -184,9 +183,8 @@ class AssetRepository extends CommonRepository
         $q = $this->_em->getConnection()->createQueryBuilder();
         $q->select('sum(a.size) as total_size')
             ->from(MAUTIC_TABLE_PREFIX.'assets', 'a')
-            ->where(
-                $q->expr()->in('a.id', $assets)
-            );
+            ->where('a.id IN (:assetsArray)')
+            ->setParameter("assetsArray", $assets);
 
         $result = $q->execute()->fetchAll();
 
