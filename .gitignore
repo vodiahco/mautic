@@ -72,7 +72,7 @@
 !/plugins/MauticOutlookBundle
 !/plugins/MauticSocialBundle
 !/plugins/index.html
-!plugins/GRGPasswordResetOverrideBundle
+!/plugins/GRGPasswordResetOverrideBundle
 
 /themes/*
 !/themes/aurora
