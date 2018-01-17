@@ -45,5 +45,11 @@ return [
                 'controller' => 'GRGPasswordResetOverrideBundle:Public:passwordResetConfirm',
             ],
         ],
+        'main' => [
+            'mautic_user_account' => [
+                'path'       => '/account',
+                'controller' => 'GRGPasswordResetOverrideBundle:Profile:index',
+            ],
+        ],
     ],
 ];

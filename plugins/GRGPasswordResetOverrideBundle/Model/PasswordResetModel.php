@@ -243,10 +243,8 @@ class PasswordResetModel extends FormModel
         );
         $text = str_replace('\\n', "\n", $text);
         $html = nl2br($text);
-
         $mailer->setBody($html);
         $mailer->setPlainText(strip_tags($text));
-
         $mailer->send();
     }
 }

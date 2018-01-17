@@ -69,10 +69,10 @@ return [
                 'path'       => '/roles/{objectAction}/{objectId}',
                 'controller' => 'MauticUserBundle:Role:execute',
             ],
-            'mautic_user_account' => [
-                'path'       => '/account',
-                'controller' => 'MauticUserBundle:Profile:index',
-            ],
+            //'mautic_user_account' => [
+            //    'path'       => '/account',
+            //    'controller' => 'MauticUserBundle:Profile:index',
+            //],
         ],
 
         'api' => [
