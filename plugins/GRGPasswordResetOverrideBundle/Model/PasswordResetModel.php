@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: odiahv
@@ -12,6 +13,7 @@ use Mautic\CoreBundle\Model\FormModel;
 use Mautic\EmailBundle\Helper\MailHelper;
 use Mautic\UserBundle\Entity\User;
 use MauticPlugin\GRGPasswordResetOverrideBundle\Entity\PasswordReset;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
 class PasswordResetModel extends FormModel
 {
@@ -246,5 +248,34 @@ class PasswordResetModel extends FormModel
         $mailer->setBody($html);
         $mailer->setPlainText(strip_tags($text));
         $mailer->send();
+    }
+
+    
+    public function isValidPasswordFormat($password)
+    {
+      $uppercase = preg_match('@[A-Z]@', $password);
+      $lowercase = preg_match('@[a-z]@', $password);
+      $number    = preg_match('@[0-9]@', $password);
+      $specialChars = preg_match('@[\w]@', $password);
+      if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    
+    public function hashPassword(User $entity, PasswordEncoderInterface $encoder, $submittedPassword)
+    {
+        if (!empty($submittedPassword)) {
+            //hash the clear password submitted via the form
+            return $encoder->encodePassword($submittedPassword, $entity->getSalt());
+        }
+
+        return $entity->getPassword();
+    }
+    
+    public function shouldCheckPassword($submittedPassword)
+    {
+        return !empty($submittedPassword);
     }
 }

@@ -12,6 +12,7 @@
 namespace MauticPlugin\GRGPasswordResetOverrideBundle\Controller;
 
 use Mautic\CoreBundle\Controller\FormController;
+use Symfony\Component\Form\FormError;
 
 /**
  * Class ProfileController.
@@ -28,6 +29,7 @@ class ProfileController extends FormController
         //get current user
         $me    = $this->get('security.token_storage')->getToken()->getUser();
         $model = $this->getModel('user');
+        $resetModel = $this->getModel('grg_password_reset_override.password_reset');
 
         //set some permissions
         $permissions = [
@@ -144,16 +146,30 @@ class ProfileController extends FormController
         }
 
         //Check for a submitted form and process it
+        $passwordValid = false;
         $submitted = $this->get('session')->get('formProcessed', 0);
         if ($this->request->getMethod() == 'POST' && !$submitted) {
             $this->get('session')->set('formProcessed', 1);
 
             //check to see if the password needs to be rehashed
+            
             $submittedPassword     = $this->request->request->get('user[plainPassword][password]', null, true);
-            $encoder               = $this->get('security.encoder_factory')->getEncoder($me);
-            $overrides['password'] = $model->checkNewPassword($me, $encoder, $submittedPassword);
+            if ($resetModel->shouldCheckPassword($submittedPassword)) {
+                if ($resetModel->isValidPasswordFormat($submittedPassword)) {
+                    $encoder               = $this->get('security.encoder_factory')->getEncoder($me);
+                    $overrides['password'] = $resetModel->hashPassword($me, $encoder, $submittedPassword);
+                    $passwordValid = true;
+                } else {
+                    $passwordValid = false;
+                } 
+            } else {
+                $passwordValid = true;
+            }
+            
+            
             if (!$cancelled = $this->isFormCancelled($form)) {
-                if ($this->isFormValid($form)) {
+                if ($this->isFormValid($form) && $passwordValid) {
+                    
                     foreach ($overrides as $k => $v) {
                         $func = 'set'.ucfirst($k);
                         $me->$func($v);
@@ -224,9 +240,14 @@ class ProfileController extends FormController
             } else {
                 return $this->redirect($this->generateUrl('mautic_dashboard_index'));
             }
+        } else {
+            $passwordValid = true;
         }
         $this->get('session')->set('formProcessed', 0);
 
+        if (! $passwordValid) {
+            $form->get('plainPassword')->get("password")->addError(new FormError('Password must have at least 1 number, 1 special character, 1 Uppercase and min 8 characters'));
+        }
         $parameters = [
             'permissions'       => $permissions,
             'me'                => $me,

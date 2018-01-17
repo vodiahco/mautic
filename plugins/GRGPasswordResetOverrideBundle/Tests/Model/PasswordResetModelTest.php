@@ -71,9 +71,30 @@ class PasswordResetModelTest extends KernelTestCase
         $this->assertEquals($require, $this->passwordResetModel->getRequireCaps());
     }
 
+    
     public function testRequireSpecial()
     {
         $require = $this->getToken()['grg_password_config']['require_special'];
         $this->assertEquals($require, $this->passwordResetModel->getRequireSpecial());
+    }
+    
+    
+    public function testIsValidPasswordFormat()
+    {
+        $this->assertFalse($this->passwordResetModel->isValidPasswordFormat("wrong"));
+    }
+    public function testIsValidPasswordFormatTrue()
+    {
+        $this->assertTrue($this->passwordResetModel->isValidPasswordFormat("@Rightformat3"));
+    }
+    
+    public function testShouldCheckPasswordTrue()
+    {
+        $this->assertTrue($this->passwordResetModel->shouldCheckPassword("true"));
+    }
+    
+    public function testShouldCheckPasswordFalse()
+    {
+        $this->assertFalse($this->passwordResetModel->shouldCheckPassword(null));
     }
 }
