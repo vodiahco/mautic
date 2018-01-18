@@ -50,6 +50,10 @@ return [
                 'path'       => '/account',
                 'controller' => 'GRGPasswordResetOverrideBundle:Profile:index',
             ],
+            'mautic_user_action' => [
+                'path'       => '/users/{objectAction}/{objectId}',
+                'controller' => 'GRGPasswordResetOverrideBundle:User:execute',
+            ],
         ],
     ],
 ];

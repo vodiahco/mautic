@@ -287,13 +287,13 @@ class User extends FormEntity implements AdvancedUserInterface, \Serializable, E
             ]
         ));
 
-        $metadata->addPropertyConstraint('plainPassword', new Assert\Length(
-            [
-                'min'        => 6,
-                'minMessage' => 'mautic.user.user.password.minlength',
-                'groups'     => ['CheckPassword'],
-            ]
-        ));
+//        $metadata->addPropertyConstraint('plainPassword', new Assert\Length(
+//            [
+//                'min'        => 6,
+//                'minMessage' => 'mautic.user.user.password.minlength',
+//                'groups'     => ['CheckPassword'],
+//            ]
+//        ));
 
         $metadata->setGroupSequence(['User', 'SecondPass', 'CheckPassword']);
     }

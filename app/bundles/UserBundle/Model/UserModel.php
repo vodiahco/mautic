@@ -155,7 +155,6 @@ class UserModel extends FormModel
                 $this->em->getRepository('MauticUserBundle:Permission')->getPermissionsByRole($entity->getRole())
             );
         }
-
         return $entity;
     }
 

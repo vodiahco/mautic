@@ -57,10 +57,10 @@ return [
                 'path'       => '/users/{page}',
                 'controller' => 'MauticUserBundle:User:index',
             ],
-            'mautic_user_action' => [
-                'path'       => '/users/{objectAction}/{objectId}',
-                'controller' => 'MauticUserBundle:User:execute',
-            ],
+//            'mautic_user_action' => [
+//                'path'       => '/users/{objectAction}/{objectId}',
+//                'controller' => 'MauticUserBundle:User:execute',
+//            ],
             'mautic_role_index' => [
                 'path'       => '/roles/{page}',
                 'controller' => 'MauticUserBundle:Role:index',

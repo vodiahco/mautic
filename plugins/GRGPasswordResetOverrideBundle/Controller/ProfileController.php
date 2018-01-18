@@ -12,6 +12,7 @@
 namespace MauticPlugin\GRGPasswordResetOverrideBundle\Controller;
 
 use Mautic\CoreBundle\Controller\FormController;
+use MauticPlugin\GRGPasswordResetOverrideBundle\Controller\Traits\ValidationMessageTrait;
 use Symfony\Component\Form\FormError;
 
 /**
@@ -19,6 +20,7 @@ use Symfony\Component\Form\FormError;
  */
 class ProfileController extends FormController
 {
+    use ValidationMessageTrait;
     /**
      * Generate's account profile.
      *
@@ -246,7 +248,7 @@ class ProfileController extends FormController
         $this->get('session')->set('formProcessed', 0);
 
         if (! $passwordValid) {
-            $form->get('plainPassword')->get("password")->addError(new FormError('Password must have at least 1 number, 1 special character, 1 Uppercase and min 8 characters'));
+            $this->setPasswordFormatErrorMessage($form->get('plainPassword')->get("password"));
         }
         $parameters = [
             'permissions'       => $permissions,

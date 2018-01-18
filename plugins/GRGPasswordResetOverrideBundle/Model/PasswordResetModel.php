@@ -236,7 +236,7 @@ class PasswordResetModel extends FormModel
     {
         $mailer     = $this->mailHelper->getMailer();
         $resetLink  = $this->router->generate('mautic_user_passwordresetconfirm', ['token' => $resetToken], true);
-        $this->logger->debug($resetLink);
+        //$this->logger->debug($resetLink); //for testing due to localhost mailer issues. MUST BE REMOVED!!!!!
         $mailer->setTo([$user->getEmail() => $user->getName()]);
         $mailer->setSubject($this->translator->trans('mautic.user.user.passwordreset.subject'));
         $text = $this->translator->trans(
@@ -250,7 +250,10 @@ class PasswordResetModel extends FormModel
         $mailer->send();
     }
 
-    
+    /**
+     * @param $password
+     * @return bool
+     */
     public function isValidPasswordFormat($password)
     {
       $uppercase = preg_match('@[A-Z]@', $password);
@@ -263,7 +266,13 @@ class PasswordResetModel extends FormModel
         return true;
       }
     }
-    
+
+    /**
+     * @param User $entity
+     * @param PasswordEncoderInterface $encoder
+     * @param $submittedPassword
+     * @return string
+     */
     public function hashPassword(User $entity, PasswordEncoderInterface $encoder, $submittedPassword)
     {
         if (!empty($submittedPassword)) {
@@ -273,7 +282,11 @@ class PasswordResetModel extends FormModel
 
         return $entity->getPassword();
     }
-    
+
+    /**
+     * @param $submittedPassword
+     * @return bool
+     */
     public function shouldCheckPassword($submittedPassword)
     {
         return !empty($submittedPassword);

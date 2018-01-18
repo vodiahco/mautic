@@ -9,10 +9,16 @@
 namespace MauticPlugin\GRGPasswordResetOverrideBundle\Controller;
 
 use Mautic\CoreBundle\Controller\FormController;
+use MauticPlugin\GRGPasswordResetOverrideBundle\Controller\Traits\ValidationMessageTrait;
 use Symfony\Component\Form\FormError;
 
 class PublicController extends FormController
 {
+    use ValidationMessageTrait;
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function passwordResetAction()
     {
         /**
@@ -63,6 +69,7 @@ class PublicController extends FormController
         ]);
     }
 
+
     /**
      * @return \Symfony\Component\HttpFoundation\JsonResponse|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -79,54 +86,62 @@ class PublicController extends FormController
 
         ///Check for a submitted form and process it
         if ($this->request->getMethod() == 'POST') {
-            if ($isValid = $this->isFormValid($form)) {
-                //find the user
-                $data = $form->getData();
+            $data = $form->getData();
+            $password =$this->request->request->get('passwordresetconfirm[plainPassword][password]', null, true);
+            if ($this->isPasswordFormatValid($password)) {
                 /**
-                 * @var \Mautic\UserBundle\Entity\User
+                 * @var \MauticPlugin\GRGPasswordResetOverrideBundle\Model\PasswordResetModel
                  */
-                $user = $model->getRepository()->findByIdentifier($data['identifier']);
+                $resetModel = $this->getModel('grg_password_reset_override.password_reset');
 
-                if ($user == null) {
-                    //should show custom message
-                    $form['identifier']->addError(new FormError($this->translator->trans('mautic.user.user.passwordreset.nouserfound', [], 'validators')));
-                } else {
-                    if ($this->request->getSession()->has('resetToken')) {
-                        $resetToken = $this->request->getSession()->get('resetToken');
-                        $encoder    = $this->get('security.encoder_factory')->getEncoder($user);
-                        /**
-                         * @var \MauticPlugin\GRGPasswordResetOverrideBundle\Model\PasswordResetModel
-                         */
-                        $resetModel = $this->getModel('grg_password_reset_override.password_reset');
-                        if ($resetModel->isValidToken($resetToken, $user)) {
-                            $encodedPassword = $model->checkNewPassword($user, $encoder, $data['plainPassword']);
-                            $user->setPassword($encodedPassword);
-                            $resetModel->invalidateToken();
-                            $model->saveEntity($user);
+                if ($isValid = $this->isFormValid($form)) {
+                    //find the user
 
-                            $this->addFlash('mautic.user.user.notice.passwordreset.success', [], 'notice', null, false);
+                    /**
+                     * @var \Mautic\UserBundle\Entity\User
+                     */
+                    $user = $model->getRepository()->findByIdentifier($data['identifier']);
 
-                            $this->request->getSession()->remove('resetToken');
-
-                            return $this->redirect($this->generateUrl('login'));
-                        }
-
-                        return $this->delegateView([
-                            'viewParameters' => [
-                                'form' => $form->createView(),
-                            ],
-                            'contentTemplate' => 'MauticUserBundle:Security:resetconfirm.html.php',
-                            'passthroughVars' => [
-                                'route' => $action,
-                            ],
-                        ]);
+                    if ($user == null) {
+                        //should show custom message
+                        $form['identifier']->addError(new FormError($this->translator->trans('mautic.user.user.passwordreset.nouserfound', [], 'validators')));
                     } else {
-                        $this->addFlash('mautic.user.user.notice.passwordreset.missingtoken', [], 'notice', null, false);
+                        if ($this->request->getSession()->has('resetToken')) {
+                            $resetToken = $this->request->getSession()->get('resetToken');
+                            $encoder    = $this->get('security.encoder_factory')->getEncoder($user);
 
-                        return $this->redirect($this->generateUrl('mautic_user_passwordresetconfirm'));
+                            if ($resetModel->isValidToken($resetToken, $user)) {
+                                $encodedPassword = $model->checkNewPassword($user, $encoder, $data['plainPassword']);
+                                $user->setPassword($encodedPassword);
+                                $resetModel->invalidateToken();
+                                $model->saveEntity($user);
+
+                                $this->addFlash('mautic.user.user.notice.passwordreset.success', [], 'notice', null, false);
+
+                                $this->request->getSession()->remove('resetToken');
+
+                                return $this->redirect($this->generateUrl('login'));
+                            }
+
+                            return $this->delegateView([
+                                'viewParameters' => [
+                                    'form' => $form->createView(),
+                                ],
+                                'contentTemplate' => 'MauticUserBundle:Security:resetconfirm.html.php',
+                                'passthroughVars' => [
+                                    'route' => $action,
+                                ],
+                            ]);
+                        } else {
+                            $this->addFlash('mautic.user.user.notice.passwordreset.missingtoken', [], 'notice', null, false);
+                            return $this->redirect($this->generateUrl('mautic_user_passwordresetconfirm'));
+                        }
                     }
                 }
+            } else {
+                $this->setPasswordFormatErrorMessage($form->get("plainPassword")->get("password"));
             }
+
         }
         $this->request->getSession()->set('resetToken', $token);
 
@@ -149,5 +164,14 @@ class PublicController extends FormController
         $this->addFlash('mautic.user.user.notice.passwordreset', [], 'notice', null, false);
 
         return $this->redirect($this->generateUrl('login'));
+    }
+
+    protected function isPasswordFormatValid($password)
+    {
+        /**
+         * @var \MauticPlugin\GRGPasswordResetOverrideBundle\Model\PasswordResetModel $resetModel
+         */
+        $resetModel = $this->getModel('grg_password_reset_override.password_reset');
+        return $resetModel->isValidPasswordFormat($password);
     }
 }
