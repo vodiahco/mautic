@@ -218,15 +218,15 @@ return [
                 'arguments' => 'Mautic\UserBundle\Entity\Permission',
                 'factory'   => ['@mautic.permission.manager', 'getRepository'],
             ],
-            'mautic.user.form_authenticator' => [
-                'class'     => 'Mautic\UserBundle\Security\Authenticator\FormAuthenticator',
-                'arguments' => [
-                    'mautic.helper.integration',
-                    'security.password_encoder',
-                    'event_dispatcher',
-                    'request_stack',
-                ],
-            ],
+//            'mautic.user.form_authenticator' => [
+//                'class'     => 'Mautic\UserBundle\Security\Authenticator\FormAuthenticator',
+//                'arguments' => [
+//                    'mautic.helper.integration',
+//                    'security.password_encoder',
+//                    'event_dispatcher',
+//                    'request_stack',
+//                ],
+//            ],
             'mautic.user.preauth_authenticator' => [
                 'class'     => 'Mautic\UserBundle\Security\Authenticator\PreAuthAuthenticator',
                 'arguments' => [
@@ -261,13 +261,13 @@ return [
                 ],
                 'public' => false,
             ],
-            'mautic.security.authentication_handler' => [
-                'class'     => 'Mautic\UserBundle\Security\Authentication\AuthenticationHandler',
-                'arguments' => [
-                    'router',
-                    'session',
-                ],
-            ],
+//            'mautic.security.authentication_handler' => [
+//                'class'     => 'Mautic\UserBundle\Security\Authentication\AuthenticationHandler',
+//                'arguments' => [
+//                    'router',
+//                    'session',
+//                ],
+//            ],
             'mautic.security.logout_handler' => [
                 'class'     => 'Mautic\UserBundle\Security\Authentication\LogoutHandler',
                 'arguments' => [

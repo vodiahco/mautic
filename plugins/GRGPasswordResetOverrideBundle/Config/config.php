@@ -32,6 +32,30 @@ return [
                     'mautic.helper.mailer',
                 ],
             ],
+            'mautic.grg_password_reset_override.model.account_lock' => [
+                'class'     => 'MauticPlugin\GRGPasswordResetOverrideBundle\Model\AccountLockModel',
+            ],
+        ],
+        'other' => [
+            // Authentication
+            'mautic.security.authentication_handler' => [
+                'class'     => 'MauticPlugin\GRGPasswordResetOverrideBundle\Security\Authentication\AuthenticationHandler',
+                'arguments' => [
+                    'router',
+                    'session',
+                    'mautic.grg_password_reset_override.model.account_lock'
+                ],
+            ],
+            'mautic.user.form_authenticator' => [
+                'class'     => 'MauticPlugin\GRGPasswordResetOverrideBundle\Security\Authenticator\FormAuthenticator',
+                'arguments' => [
+                    'mautic.helper.integration',
+                    'security.password_encoder',
+                    'event_dispatcher',
+                    'request_stack',
+                    'mautic.grg_password_reset_override.model.account_lock'
+                ],
+            ],
         ],
     ],
     'routes' => [
@@ -56,4 +80,5 @@ return [
             ],
         ],
     ],
+
 ];
