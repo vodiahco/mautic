@@ -56,6 +56,9 @@ class AuthenticationHandler implements AuthenticationSuccessHandlerInterface, Au
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
+        //reset failed attempts -odiahv
+        $this->resetAttempts($token);
+        //end
         // Remove post_logout if set
         $request->getSession()->remove('post_logout');
 
@@ -86,13 +89,6 @@ class AuthenticationHandler implements AuthenticationSuccessHandlerInterface, Au
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        //if account is locked, ignore
-
-        //else update account lock counter
-
-        //check if count is over threshold then lock account
-
-
         // Remove post_logout if set
         $request->getSession()->remove('post_logout');
 
@@ -108,6 +104,18 @@ class AuthenticationHandler implements AuthenticationSuccessHandlerInterface, Au
             $request->getSession()->set(Security::AUTHENTICATION_ERROR, $exception);
 
             return new RedirectResponse($this->router->generate('login'));
+        }
+    }
+
+    /**
+     * @param TokenInterface $token
+     */
+    protected function resetAttempts(TokenInterface $token)
+    {
+        $user = $token->getUser();
+        if ($user) {
+            $this->accountLockModel->initWithUser($user);
+            $this->accountLockModel->resetAttempts();
         }
     }
 }

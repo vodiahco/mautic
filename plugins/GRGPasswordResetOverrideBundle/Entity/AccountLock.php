@@ -173,5 +173,6 @@ class AccountLock
     public function resetAttempts()
     {
         $this->attempts = 0;
+        $this->validity = 0;
     }
 }

@@ -97,6 +97,9 @@ class FormAuthenticator implements SimpleFormAuthenticatorInterface
             } catch (UsernameNotFoundException $e) {
             }
 
+            //check if account is locked - odiahv
+            $this->checkAccountLocked($user);
+
             // Will try with the given password unless the plugin explicitly failed authentication
             $tryWithPassword = true;
 
@@ -121,16 +124,21 @@ class FormAuthenticator implements SimpleFormAuthenticatorInterface
                 // Try authenticating with local password
                 $authenticated = $this->encoder->isPasswordValid($user, $token->getCredentials());
             }
+
+            //assume authentication has failed - odiahv
+            //save login attempts
+            if (! $authenticated) {
+                $this->incrementAttemptOrLock($user);
+            }
+            //end
         } else {
             // Assume the user is authenticated although the token will tell for sure
             $authenticated = true;
         }
 
         if ($authenticated) {
-            //check if account locked and return an exception
-            if ($this->accountLockModel->isAccountLocked($user)) {
-                throw new AuthenticationException("Account locked");
-            }
+            //check if account locked and return an exception - odiahv
+            $this->checkAccountLocked($user);
             // end
             return new PluginToken(
                 $providerKey,
@@ -184,5 +192,28 @@ class FormAuthenticator implements SimpleFormAuthenticatorInterface
             $username,
             $password
         );
+    }
+
+    /**
+     * @param $user
+     */
+    protected function checkAccountLocked($user)
+    {
+        $this->accountLockModel->initWithUser($user);
+        if ($this->accountLockModel->isAccountLocked()) {
+            throw new AuthenticationException("Account locked");
+        }
+    }
+
+    /**
+     * @param $user
+     */
+    protected function incrementAttemptOrLock($user)
+    {
+        $this->accountLockModel->initWithUser($user);
+        $this->accountLockModel->incrementAttempts();
+        if ($this->accountLockModel->shouldAccountLock()) {
+            $this->accountLockModel->lockAccount();
+        }
     }
 }

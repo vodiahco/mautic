@@ -15,8 +15,8 @@ use MauticPlugin\GRGPasswordResetOverrideBundle\Entity\AccountLock;
 
 class AccountLockModel extends FormModel
 {
-    const ACCOUNT_LOCKOUT_TIME = 30 * 60 *60; //30 minutes
-    const ACCOUNT_LOCKOUT_MAX_ATTEMPTS = 5; //30 minutes
+    const ACCOUNT_LOCKOUT_TIME = 30 * 60; //30 minutes
+    const ACCOUNT_LOCKOUT_MAX_ATTEMPTS = 5; //max login attempts
     /**
      * @var AccountLock $accountLockEntity
      */
@@ -47,8 +47,7 @@ class AccountLockModel extends FormModel
      * @return bool
      */
     public function isAccountLocked()
-    { //return true;
-
+    {
         $entity = $this->getAccountLockEntity();
         if (! $entity) {
             return false;
@@ -63,6 +62,8 @@ class AccountLockModel extends FormModel
         $entity = $this->getAccountLockEntityOrCreate();
         $entity->setUserId($this->user->getId());
         $entity->incrementAttempts();
+        $entity->setValidity(0);
+        $this->em->persist($entity);
         $this->em->flush();
     }
 
@@ -74,6 +75,7 @@ class AccountLockModel extends FormModel
         $entity = $this->getAccountLockEntity();
         if ($entity) {
             $entity->resetAttempts();
+            $this->em->persist($entity);
             $this->em->flush();
         }
     }
@@ -96,6 +98,7 @@ class AccountLockModel extends FormModel
     {
         $validity = time() + self::ACCOUNT_LOCKOUT_TIME;
         $this->accountLockEntity->setValidity($validity);
+        $this->em->persist($this->accountLockEntity);
         $this->em->flush();
     }
 
