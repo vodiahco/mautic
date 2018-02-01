@@ -36,8 +36,11 @@ class AccountLockModel extends FormModel
     /**
      * @param User $user
      */
-    public function initWithUser(User $user)
+    public function initWithUser($user)
     {
+        if (! $user instanceof User) {
+            return;
+        }
         $this->accountLockRepository = $this->em->getRepository(AccountLock::class);
         $this->user = $user;
         $this->accountLockEntity = $this->accountLockRepository->getEntityByUserId($this->user->getId());
