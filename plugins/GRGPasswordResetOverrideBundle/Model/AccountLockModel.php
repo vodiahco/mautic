@@ -111,7 +111,9 @@ class AccountLockModel extends FormModel
     private function getAccountLockEntity()
     {
         if (! $this->accountLockEntity) {
-            $this->accountLockEntity = $this->accountLockRepository->getEntityByUserId($this->user->getId());
+            $this->accountLockRepository = $this->em->getRepository(AccountLock::class);
+            $id = ($this->user) ? $this->user->getId() : 0;
+            $this->accountLockEntity = $this->accountLockRepository->getEntityByUserId($id);
         }
         return $this->accountLockEntity;
     }
