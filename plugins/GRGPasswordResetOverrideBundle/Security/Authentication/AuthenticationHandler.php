@@ -114,9 +114,8 @@ class AuthenticationHandler implements AuthenticationSuccessHandlerInterface, Au
     {
         $user = $token->getUser();
         if ($user) {
-            // to enable account lock plugin install
-           // $this->accountLockModel->initWithUser($user);
-          //  $this->accountLockModel->resetAttempts();
+            $this->accountLockModel->initWithUser($user);
+            $this->accountLockModel->resetAttempts();
         }
     }
 }
