@@ -200,10 +200,10 @@ class FormAuthenticator implements SimpleFormAuthenticatorInterface
     protected function checkAccountLocked($user)
     {
         if ($user) {
-            $this->accountLockModel->initWithUser($user);
-            if ($this->accountLockModel->isAccountLocked()) {
-                throw new AuthenticationException("Account locked");
-            }
+//            $this->accountLockModel->initWithUser($user);
+//            if ($this->accountLockModel->isAccountLocked()) {
+//                throw new AuthenticationException("Account locked");
+//            }
         }
     }
 
@@ -213,11 +213,11 @@ class FormAuthenticator implements SimpleFormAuthenticatorInterface
     protected function incrementAttemptOrLock($user)
     {
         if ($user) {
-            $this->accountLockModel->initWithUser($user);
-            $this->accountLockModel->incrementAttempts();
-            if ($this->accountLockModel->shouldAccountLock()) {
-                $this->accountLockModel->lockAccount();
-            }
+//            $this->accountLockModel->initWithUser($user);
+//            $this->accountLockModel->incrementAttempts();
+//            if ($this->accountLockModel->shouldAccountLock()) {
+//                $this->accountLockModel->lockAccount();
+//            }
         }
     }
 }
