@@ -62,12 +62,14 @@ class AccountLockModel extends FormModel
 
     public function incrementAttempts()
     {
-        $entity = $this->getAccountLockEntityOrCreate();
-        $entity->setUserId($this->user->getId());
-        $entity->incrementAttempts();
-        $entity->setValidity(0);
-        $this->em->persist($entity);
-        $this->em->flush();
+        if ($this->user) {
+            $entity = $this->getAccountLockEntityOrCreate();
+            $entity->setUserId($this->user->getId());
+            $entity->incrementAttempts();
+            $entity->setValidity(0);
+            $this->em->persist($entity);
+            $this->em->flush();
+        }
     }
 
     /**
