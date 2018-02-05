@@ -86,7 +86,6 @@ class PublicController extends FormController
 
         ///Check for a submitted form and process it
         if ($this->request->getMethod() == 'POST') {
-            $data = $form->getData();
             $password =$this->request->request->get('passwordresetconfirm[plainPassword][password]', null, true);
             if ($this->isPasswordFormatValid($password)) {
                 /**
@@ -96,7 +95,7 @@ class PublicController extends FormController
 
                 if ($isValid = $this->isFormValid($form)) {
                     //find the user
-
+                    $data = $form->getData();
                     /**
                      * @var \Mautic\UserBundle\Entity\User
                      */
