@@ -11,6 +11,19 @@ return [
     'description' => 'SMPT setting based on email sender',
     'version'     => '1.0',
     'author'      => 'Victor O.',
+    'parameters' => [
+        'grg_smtp_transports' => [
+            'hotels.com' => [
+                "host" => "gmail",
+                'username' => 'hotels@grg.com',
+                'password' => '@password'
+            ],
+            'delegate.com' => [
+                'username' => 'hotels@grg.com',
+                'password' => '@password'
+            ],
+        ]
+    ],
     'services' => [
         'other' => [
             'mautic.helper.mailer' => [
@@ -23,7 +36,8 @@ return [
             'mailer' => [
                 'class'     => \MauticPlugin\GRGSmtpMappingBundle\Mailer\Mailer::class,
                 'arguments' => [
-                    'swiftmailer.transport.real'
+                    'swiftmailer.transport.real',
+                    '%mautic.grg_smtp_transports%'
                     ]
             ],
         ]
