@@ -73,7 +73,7 @@ class MauticCoreExtension extends Extension
 
                     foreach ($services as $name => $details) {
                         if (isset($serviceNames[$name])) {
-                            throw new \InvalidArgumentException("$name is already registered");
+                            //throw new \InvalidArgumentException("$name is already registered");
                         }
                         $serviceNames[$name] = true;
 
