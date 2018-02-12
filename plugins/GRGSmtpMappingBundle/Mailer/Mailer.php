@@ -125,7 +125,8 @@ class Mailer extends \Swift_Mailer
         $smptHost = $hostConfig['host'];
         $username = $hostConfig['username'];
         $password = $hostConfig['password'];
-        $transport = (new Swift_SmtpTransport($smptHost, 25))
+        $encryption = (isset($hostConfig['ssl'])) ? $hostConfig['ssl'] : null;
+        $transport = (new Swift_SmtpTransport($smptHost, 25, $encryption))
             ->setUsername($username)
             ->setPassword($password)
         ;
@@ -143,5 +144,6 @@ class Mailer extends \Swift_Mailer
         } else {
             $this->configKeys = [];
         }
+        $this->logger->log("debug", print_r($this->configKeys, 1));
     }
 }
