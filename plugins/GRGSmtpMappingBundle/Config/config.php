@@ -37,7 +37,8 @@ return [
                 'class'     => \MauticPlugin\GRGSmtpMappingBundle\Mailer\Mailer::class,
                 'arguments' => [
                     'swiftmailer.transport.real',
-                    '%mautic.grg_smtp_transports%'
+                    '%mautic.grg_smtp_transports%',
+                    '@monolog.logger.mautic'
                     ]
             ],
         ]

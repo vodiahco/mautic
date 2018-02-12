@@ -13,6 +13,7 @@ use Swift_Mime_Message;
 use Swift_RfcComplianceException;
 use Swift_SmtpTransport;
 use Swift_Transport;
+use Monolog\Logger;
 
 class Mailer extends \Swift_Mailer
 {
@@ -20,16 +21,18 @@ class Mailer extends \Swift_Mailer
     protected $config;
     protected $configKeys;
     protected $currentHost = "";
+    private $logger;
 
     /**
      * @param Swift_Transport $transport
      * @param $config
      */
-    public function __construct(Swift_Transport $transport, $config)
+    public function __construct(Swift_Transport $transport, $config, Logger $logger)
     {
         $this->config = $config;
         parent::__construct($transport);
         $this->initConfig();
+        $this->logger = $logger;
     }
 
     /**
@@ -41,11 +44,10 @@ class Mailer extends \Swift_Mailer
     {
         $failedRecipients = (array) $failedRecipients;
         $transport = $this->getValidTransport($message);
-
+        $this->logger->log("debug", "Transport host is is: -" .print_r($transport->getHost(), 1));
         if (!$transport->isStarted()) {
             $transport->start();
         }
-
         $sent = 0;
 
         try {
@@ -67,12 +69,26 @@ class Mailer extends \Swift_Mailer
     {
         $transport = $this->getTransport();
         $emails = $message->getFrom();
-        if (count($emails > 0)) {
-            $fromEmail = $emails[0];
-            if ($this->shouldResetTransport($fromEmail)) {
-                $transportFor = $this->getTransportForMessage($fromEmail);
+
+        if (is_array($emails)) {
+            $this->logger->log("debug", "email is array");
+            $emails = array_keys($emails);
+            $this->logger->log("debug", "email is: -" .print_r($emails, 1));
+            if (count($emails) > 0) {
+                $fromEmail = $emails[0];
+                if ($this->shouldResetTransport($fromEmail)) {
+                    $transportFor = $this->getTransportForMessage($fromEmail);
+                    $transport = ($transportFor) ? $transportFor : $transport;
+                }
+            }
+        } else if (is_string($emails)) {
+            $this->logger->log("info", "email is array");
+            $this->logger->log("info", print_r($emails));
+            if ($this->shouldResetTransport($emails)) {
+                $transportFor = $this->getTransportForMessage($emails);
                 $transport = ($transportFor) ? $transportFor : $transport;
             }
+
         }
         return $transport;
     }
