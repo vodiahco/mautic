@@ -81,14 +81,6 @@ class Mailer extends \Swift_Mailer
                     $transport = ($transportFor) ? $transportFor : $transport;
                 }
             }
-        } else if (is_string($emails)) {
-            $this->logger->log("info", "email is array");
-            $this->logger->log("info", print_r($emails));
-            if ($this->shouldResetTransport($emails)) {
-                $transportFor = $this->getTransportForMessage($emails);
-                $transport = ($transportFor) ? $transportFor : $transport;
-            }
-
         }
         return $transport;
     }
@@ -100,12 +92,11 @@ class Mailer extends \Swift_Mailer
     private function shouldResetTransport($fromEmail)
     {
         if ($fromEmail) {
-            $host = $this->getEmailHost($fromEmail);
-            if ($host == $this->currentHost) {
+            if ($fromEmail == $this->currentHost) {
                 //exit early
                 return false;
             }
-            if (in_array($host, $this->configKeys)) {
+            if (in_array($fromEmail, $this->configKeys)) {
                 return true;
             }
         }
@@ -130,8 +121,7 @@ class Mailer extends \Swift_Mailer
      */
     private function getTransportForMessage($fromEmail)
     {
-        $host = $this->getEmailHost($fromEmail);
-        $hostConfig = $this->config[$host];
+        $hostConfig = $this->config[$fromEmail];
         $smptHost = $hostConfig['host'];
         $username = $hostConfig['username'];
         $password = $hostConfig['password'];
@@ -139,7 +129,7 @@ class Mailer extends \Swift_Mailer
             ->setUsername($username)
             ->setPassword($password)
         ;
-        $this->currentHost = $host;
+        $this->currentHost = $fromEmail;
         return $transport;
     }
 
@@ -148,6 +138,10 @@ class Mailer extends \Swift_Mailer
      */
     private function initConfig()
     {
-        $this->configKeys = array_keys((array) $this->config);
+        if ($this->config) {
+            $this->configKeys = array_keys((array) $this->config);
+        } else {
+            $this->configKeys = [];
+        }
     }
 }
