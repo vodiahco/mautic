@@ -13,10 +13,10 @@ return [
     'author'      => 'Victor O.',
     'parameters' => [
         'grg_smtp_transports' => [
-            'hotels.com' => [
-                "host" => "gmail",
-                'username' => 'hotels@grg.com',
-                'password' => '@password'
+            'grg.com' => [
+                "host" => "smtp.mailtrap.io",
+                'username' => '12a268598f711f',
+                'password' => '13bc9ae57abd15'
             ],
             'delegate.com' => [
                 'username' => 'hotels@grg.com',
@@ -26,7 +26,7 @@ return [
     ],
     'services' => [
         'other' => [
-            'mautic.helper.mailer' => [
+            'mautic.grg.helper.mailer' => [
                 'class'     => \MauticPlugin\GRGSmtpMappingBundle\Helper\MailHelper::class,
                 'arguments' => [
                     'mautic.factory',
