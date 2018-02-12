@@ -29,10 +29,10 @@ class Mailer extends \Swift_Mailer
      */
     public function __construct(Swift_Transport $transport, $config, Logger $logger)
     {
+        $this->logger = $logger;
         $this->config = $config;
         parent::__construct($transport);
         $this->initConfig();
-        $this->logger = $logger;
     }
 
     /**
