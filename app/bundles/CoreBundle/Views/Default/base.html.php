@@ -13,6 +13,7 @@
 <html>
     <?php echo $view->render('MauticCoreBundle:Default:head.html.php'); ?>
     <body class="header-fixed">
+    <div id="grg_token" style="width: 0; height: 0"><?php echo $view['form']->csrfToken('grg_token') ?></div>
         <!-- start: app-wrapper -->
         <section id="app-wrapper">
             <?php $view['assets']->outputScripts('bodyOpen'); ?>

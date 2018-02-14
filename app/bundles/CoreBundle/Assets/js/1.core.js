@@ -812,6 +812,9 @@ var Mautic = {
      * @param failureClosure
      */
     ajaxActionRequest: function (action, data, successClosure, showLoadingBar, queue) {
+        var token = $("#grg_token").html()? $("#grg_token").html() : "";
+        data = Object.assign({}, data, {grg_token: token});
+        console.log(data);
         if (typeof Mautic.ajaxActionXhrQueue == 'undefined') {
             Mautic.ajaxActionXhrQueue = {};
         }
