@@ -15,6 +15,8 @@ MauticVars.activeRequests = 0;
 
 mQuery.ajaxSetup({
     beforeSend: function (request, settings) {
+        var grgToken = (mQuery("#grg_token").html()) ? mQuery("#grg_token").html() : "no-token";
+        request.setRequestHeader("x-grg-token", grgToken);
         if (settings.showLoadingBar) {
             mQuery('.loading-bar').addClass('active');
             MauticVars.activeRequests++;
@@ -812,9 +814,6 @@ var Mautic = {
      * @param failureClosure
      */
     ajaxActionRequest: function (action, data, successClosure, showLoadingBar, queue) {
-        var token = $("#grg_token").html()? $("#grg_token").html() : "";
-        data = Object.assign({}, data, {grg_token: token});
-        console.log(data);
         if (typeof Mautic.ajaxActionXhrQueue == 'undefined') {
             Mautic.ajaxActionXhrQueue = {};
         }

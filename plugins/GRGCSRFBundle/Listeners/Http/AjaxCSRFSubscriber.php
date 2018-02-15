@@ -40,8 +40,8 @@ class AjaxCSRFSubscriber implements EventSubscriberInterface
     {
         $request = $e->getRequest();
         if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH']) && $request->isXmlHttpRequest()) {
-            $token = $request->request->get('csrf_token');
-            $tokenId = $request->request->get('csrf_token_id');
+            $token = $request->headers->get("x-grg-token");
+            $tokenId = "grg_token";
             if (! $token) {
                 list($tokenId, $token) = $this->getTokenFromRequest($request->request->all());
             }
@@ -56,6 +56,9 @@ class AjaxCSRFSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(
@@ -85,11 +88,20 @@ class AjaxCSRFSubscriber implements EventSubscriberInterface
         return $response;
     }
 
+    /**
+     * @param $id
+     * @param $token
+     * @return bool
+     */
     protected function isCsrfTokenValid($id, $token)
     {
         return $this->provider->isTokenValid(new CsrfToken($id, $token));
     }
 
+    /**
+     * @param array $requestData
+     * @return array
+     */
     protected function getTokenFromRequest($requestData = [])
     {
         $keys = array_keys($requestData);
